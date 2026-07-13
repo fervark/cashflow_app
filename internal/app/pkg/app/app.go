@@ -18,30 +18,30 @@ type App struct {
 }
 
 func New() (*App, error) {
-	a := &App{}
-	a.service = service.New()
-	a.endpoint = endpoint.New(a.service)
-	a.server = echo.New()
+	app := &App{}
+	app.service = service.New()
+	app.endpoint = endpoint.New(app.service)
+	app.server = echo.New()
 
 	// Middleware
-	a.server.Use(middleware.Recover(), cors.Origins())
+	app.server.Use(middleware.Recover(), cors.Origins())
 
 	// Routes
-	a.server.GET("/", a.endpoint.GetMain)
+	app.server.GET("/", app.endpoint.GetMain)
 	//a.server.GET("/transaction-list", getTransactions)
 	//a.server.GET("/movement-stats", getCashMovementStats)
 	//a.server.POST("/set/transaction", setTransaction)
 	//a.server.POST("/set/category", setCategory)
 
-	return a, nil
+	return app, nil
 }
 
-func (a *App) Run() error {
+func (app *App) Run() error {
 	fmt.Println("Server started")
 
 	sc := echo.StartConfig{Address: ":8080"}
-	if err := sc.Start(context.Background(), a.server); err != nil {
-		a.server.Logger.Error("failed to start server", "error", err)
+	if err := sc.Start(context.Background(), app.server); err != nil {
+		app.server.Logger.Error("failed to start server", "error", err)
 	}
 
 	return nil
