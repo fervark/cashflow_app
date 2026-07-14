@@ -2,8 +2,7 @@ package app
 
 import (
 	"cashflow/internal/app/endpoint"
-	cors "cashflow/internal/app/middleware"
-	"cashflow/internal/app/service"
+	cors "cashflow/internal/middleware"
 	"context"
 	"fmt"
 
@@ -13,25 +12,23 @@ import (
 
 type App struct {
 	endpoint *endpoint.Endpoint
-	service  *service.Service
 	server   *echo.Echo
 }
 
 func New() (*App, error) {
 	app := &App{}
-	app.service = service.New()
-	app.endpoint = endpoint.New(app.service)
+	app.endpoint = endpoint.New()
 	app.server = echo.New()
 
 	// Middleware
 	app.server.Use(middleware.Recover(), cors.Origins())
 
 	// Routes
-	app.server.GET("/", app.endpoint.GetMain)
-	//a.server.GET("/transaction-list", getTransactions)
-	//a.server.GET("/movement-stats", getCashMovementStats)
-	//a.server.POST("/set/transaction", setTransaction)
-	//a.server.POST("/set/category", setCategory)
+	app.server.GET("/", app.endpoint.MainPage)
+	app.server.POST("/set/category", app.endpoint.SetCategory)
+	app.server.GET("/transactions", app.endpoint.GetTransactions)
+	app.server.POST("/set/transaction", app.endpoint.SetTransaction)
+	app.server.GET("/movement-stats", app.endpoint.GetCashMovementStats)
 
 	return app, nil
 }

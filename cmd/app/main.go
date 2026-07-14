@@ -3,6 +3,9 @@ package main
 import (
 	"cashflow/internal/app/pkg/app"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/joho/godotenv"
 )
@@ -14,6 +17,7 @@ func init() {
 }
 
 func main() {
+	// Start app
 	a, err := app.New()
 	if err != nil {
 		log.Fatal(err)
@@ -23,4 +27,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// Graceful shutdown
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
+
+	sign := <-stop
+	log.Println(sign.String())
 }

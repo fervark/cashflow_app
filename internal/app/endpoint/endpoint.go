@@ -1,41 +1,41 @@
 package endpoint
 
 import (
-	"net/http"
+	categories "cashflow/internal/app/service/category"
+	"cashflow/internal/app/service/mainpage"
+	"cashflow/internal/app/service/movement_stats"
+	"cashflow/internal/app/service/transactions"
 
 	"github.com/labstack/echo/v5"
 )
 
-type Service interface {
-	TransactionList() any
-}
-
 type Endpoint struct {
-	s Service
 }
 
-func New(s Service) *Endpoint {
-	return &Endpoint{
-		s: s,
-	}
+func New() *Endpoint {
+	return &Endpoint{}
 }
 
-func (r *Endpoint) GetMain(ctx *echo.Context) error {
-	return ctx.JSON(http.StatusOK, map[string]string{"message": "Start test!"})
+// MainPage Main
+func (r *Endpoint) MainPage(ctx *echo.Context) error {
+	return mainpage.New().Page(ctx)
 }
 
-//func GetTransactions(ctx *echo.Context) error {
-//	return ctx.JSON(http.StatusOK, map[string]string{"message": "Get transaction list."})
-//}
+// SetCategory Categories
+func (r *Endpoint) SetCategory(ctx *echo.Context) error {
+	return categories.New().SetCategory(ctx)
+}
 
-//func GetCashMovementStats(ctx *echo.Context) error {
-//	return ctx.JSON(http.StatusOK, map[string]string{"message": "Get cash movement statistic."})
-//}
+// GetTransactions Transactions
+func (r *Endpoint) GetTransactions(ctx *echo.Context) error {
+	return transactions.New().List(ctx)
+}
 
-//func SetTransaction(ctx *echo.Context) error {
-//	return ctx.JSON(http.StatusOK, map[string]string{"message": "Set transaction."})
-//}
+func (r *Endpoint) SetTransaction(ctx *echo.Context) error {
+	return transactions.New().SetTransaction(ctx)
+}
 
-//func SetCategory(ctx *echo.Context) error {
-//	return ctx.JSON(http.StatusOK, map[string]string{"message": "Set category transaction."})
-//}
+// GetCashMovementStats Stats
+func (r *Endpoint) GetCashMovementStats(ctx *echo.Context) error {
+	return movement_stats.New().Stats(ctx)
+}

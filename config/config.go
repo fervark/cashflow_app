@@ -14,7 +14,7 @@ type DatabaseConfig struct {
 	Port     string
 	User     string
 	Password string
-	Database string
+	Name     string
 }
 
 type Config struct {
@@ -31,7 +31,7 @@ func New() *Config {
 			Port:     getEnv("DB_PORT", "5432"),
 			User:     getEnv("DB_USER", "postgres"),
 			Password: getEnv("DB_PASSWORD", "postgres"),
-			Database: getEnv("DB_NAME", "postgres"),
+			Name:     getEnv("DB_NAME", "postgres"),
 		},
 		Cors: CorsConfig{
 			Origin: getEnv("ALLOW_ORIGIN", "http://localhost"),
