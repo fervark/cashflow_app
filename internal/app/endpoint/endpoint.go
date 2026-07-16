@@ -39,7 +39,7 @@ func (r *Endpoint) GetTransactions(ctx *echo.Context) error {
 	return ctx.JSON(http.StatusOK, res)
 }
 
-// Set transaction
+// SetTransaction Set transaction
 // Create new transaction (POST)
 func (r *Endpoint) SetTransaction(ctx *echo.Context) error {
 	res := transactions.SetTransaction(ctx)

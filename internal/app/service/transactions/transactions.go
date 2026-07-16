@@ -15,12 +15,16 @@ type Transactions struct {
 func List(ctx *echo.Context) any {
 	page, _ := strconv.Atoi(ctx.FormValue("page"))
 	limit, _ := strconv.Atoi(ctx.FormValue("limit"))
+	categoryId, _ := strconv.Atoi(ctx.FormValue("category_id"))
 
 	query := transactionGetter.TransactionListQuery{
-		UserId: ctx.FormValue("user_id"),
-		Type:   ctx.FormValue("type"),
-		Page:   page,
-		Limit:  limit,
+		UserId:     ctx.FormValue("user_id"),
+		Type:       ctx.FormValue("type"),
+		DateFrom:   ctx.FormValueOr("date_from", ""),
+		DateTo:     ctx.FormValueOr("date_to", ""),
+		CategoryId: categoryId,
+		Page:       page,
+		Limit:      limit,
 	}
 
 	// Validate data

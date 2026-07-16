@@ -3,6 +3,7 @@ package transactionGetter
 import (
 	"cashflow/internal/app/model/transaction"
 	"cashflow/internal/database"
+	"fmt"
 	"log"
 )
 
@@ -10,10 +11,13 @@ const QueryDefaultLimit = 20
 const QueryDefaultOffset = 0
 
 type TransactionListQuery struct {
-	UserId string `json:"user_id" validate:"required"`
-	Type   string `json:"type"`
-	Page   int    `json:"page"`
-	Limit  int    `json:"limit"`
+	UserId     string `json:"user_id" validate:"required"`
+	Type       string `json:"type"`
+	Page       int    `json:"page"`
+	Limit      int    `json:"limit"`
+	CategoryId int    `json:"category_id"`
+	DateFrom   string `json:"date_from"`
+	DateTo     string `json:"date_to"`
 }
 
 func GetList(q TransactionListQuery) any {
@@ -40,8 +44,20 @@ func GetList(q TransactionListQuery) any {
 	queryOrder := "t.date ASC"
 
 	query := db.Table(queryTable).Select(querySelect).Joins(queryJoin).Where("t.user_id = ?", q.UserId)
+	// Where type
 	if q.Type != "" {
 		query.Where("t.type = ?", q.Type)
+	}
+	// Where category
+	if q.CategoryId != 0 {
+		query.Where("t.category_id = ?", q.CategoryId)
+	}
+	// Where date range
+	if q.DateFrom != "" && q.DateTo != "" {
+		whereDateStr := fmt.Sprintf("t.date BETWEEN '%s' AND '%s'",
+			q.DateFrom, q.DateTo)
+
+		query.Where(whereDateStr)
 	}
 
 	var result []*transactionModel.Transaction
