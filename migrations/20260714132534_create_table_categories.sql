@@ -1,7 +1,6 @@
 -- +goose Up
 CREATE TABLE categories (
-    id int NOT NULL,
-    code varchar(40) unique,
+    id BIGSERIAL NOT NULL,
     name varchar(255),
     PRIMARY KEY(id)
 );

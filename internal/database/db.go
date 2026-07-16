@@ -2,46 +2,21 @@ package database
 
 import (
 	"cashflow/config"
-	"context"
-	"database/sql"
 	"fmt"
-	"log"
 
-	"github.com/jackc/pgx/v5/pgxpool"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-func Open() *sql.DB {
+func Open() *gorm.DB {
 	conf := config.New()
-	ctx := context.Background()
-	conStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
-		conf.Database.User,
-		conf.Database.Password,
+	conStr := fmt.Sprintf("host=%s user=%s dbname=%s password=%s sslmode=disable",
 		conf.Database.Host,
-		conf.Database.Port,
-		conf.Database.Name)
+		conf.Database.User,
+		conf.Database.Name,
+		conf.Database.Password)
 
-	dbConfig, err := pgxpool.ParseConfig(conStr)
-	if err != nil {
-		log.Fatalf("Failed to parse database config: %v", err)
-	}
-
-	pool, err := pgxpool.NewWithConfig(ctx, dbConfig)
-	if err != nil {
-		log.Fatalf("Failed to create database connection pool: %v", err)
-	}
-	defer pool.Close()
-
-	fmt.Println("Database connection established successfully")
-	db, err := sql.Open("postgres", conStr)
-	if err != nil {
-		log.Fatalf("Unable to connect to database: %v", err)
-	}
-
-	//var connect, err = pgx.Connect(context.Background(), conStr)
-	//if err != nil {
-	//	log.Fatal("Error database connection: ", err)
-	//}
-	//defer connect.Close(context.Background())
+	db, _ := gorm.Open(postgres.Open(conStr), &gorm.Config{})
 
 	return db
 }

@@ -6,22 +6,30 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 )
 
 type App struct {
-	endpoint *endpoint.Endpoint
 	server   *echo.Echo
+	endpoint *endpoint.Endpoint
+}
+
+type AppValidator struct {
+	validator *validator.Validate
 }
 
 func New() (*App, error) {
 	app := &App{}
-	app.endpoint = endpoint.New()
 	app.server = echo.New()
+	app.endpoint = endpoint.New()
 
 	// Middleware
 	app.server.Use(middleware.Recover(), cors.Origins())
+
+	// Validator
+	app.server.Validator = &AppValidator{validator: validator.New()}
 
 	// Routes
 	app.server.GET("/", app.endpoint.MainPage)
@@ -41,5 +49,12 @@ func (app *App) Run() error {
 		app.server.Logger.Error("failed to start server", "error", err)
 	}
 
+	return nil
+}
+
+func (cv *AppValidator) Validate(i any) error {
+	if err := cv.validator.Struct(i); err != nil {
+		return echo.ErrBadRequest.Wrap(err)
+	}
 	return nil
 }
