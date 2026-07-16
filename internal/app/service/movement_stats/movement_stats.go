@@ -9,10 +9,7 @@ import (
 type MovementStats struct {
 }
 
-func New() *MovementStats {
-	return &MovementStats{}
-}
-
-func (s *MovementStats) Stats(ctx *echo.Context) error {
+func GetStatistic(ctx *echo.Context) error {
+	
 	return ctx.JSON(http.StatusOK, map[string]string{"message": "Get cash movement statistic."})
 }

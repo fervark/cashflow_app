@@ -1,8 +1,9 @@
 package transactions
 
 import (
+	transactionSaveFactory "cashflow/internal/app/factory/transaction"
 	transactionGetter "cashflow/internal/app/getter/transaction"
-	"net/http"
+	transactionSetter "cashflow/internal/app/setter/transaction"
 	"strconv"
 
 	"github.com/labstack/echo/v5"
@@ -33,5 +34,24 @@ func List(ctx *echo.Context) any {
 }
 
 func SetTransaction(ctx *echo.Context) any {
-	return ctx.JSON(http.StatusOK, map[string]string{"message": "Set transaction."})
+	userId, _ := strconv.Atoi(ctx.FormValue("user_id"))
+	categoryId, _ := strconv.Atoi(ctx.FormValue("category_id"))
+
+	transaction := transactionSetter.TransactionSetQuery{
+		UserId:     userId,
+		CategoryId: categoryId,
+		Type:       ctx.FormValue("type"),
+		Price:      ctx.FormValue("price"),
+	}
+
+	// Validate data
+	if err := ctx.Validate(transaction); err != nil {
+		return err
+	}
+
+	// Save transaction factor
+	data := transactionSaveFactory.Factory{Transaction: transaction}
+	transactionSaveFactory.Run(data)
+
+	return "success"
 }

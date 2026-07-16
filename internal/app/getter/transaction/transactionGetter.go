@@ -44,7 +44,7 @@ func GetList(q TransactionListQuery) any {
 		query.Where("t.type = ?", q.Type)
 	}
 
-	var result []*transaction.Transaction
+	var result []*transactionModel.Transaction
 	query.Order(queryOrder).Offset(offset).Limit(limit).Find(&result)
 
 	return result

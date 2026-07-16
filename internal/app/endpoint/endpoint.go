@@ -18,6 +18,7 @@ func New() *Endpoint {
 }
 
 // MainPage Main
+//
 //	Page data
 func (r *Endpoint) MainPage(ctx *echo.Context) error {
 	res := mainpage.Page(ctx)
@@ -39,12 +40,15 @@ func (r *Endpoint) GetTransactions(ctx *echo.Context) error {
 }
 
 // Set transaction
+// Create new transaction (POST)
 func (r *Endpoint) SetTransaction(ctx *echo.Context) error {
 	res := transactions.SetTransaction(ctx)
 	return ctx.JSON(http.StatusOK, res)
 }
 
 // GetCashMovementStats Stats
+// Get movement statistics
 func (r *Endpoint) GetCashMovementStats(ctx *echo.Context) error {
-	return movement_stats.New().Stats(ctx)
+	res := movement_stats.GetStatistic(ctx)
+	return ctx.JSON(http.StatusOK, res)
 }

@@ -17,7 +17,7 @@ func SetCategory(ctx *echo.Context) any {
 
 	// Save category factor
 	data := categorySaveFactory.Factory{Category: category}
-	result := categorySaveFactory.Run(data)
+	categorySaveFactory.Run(data)
 
-	return result
+	return "success"
 }
