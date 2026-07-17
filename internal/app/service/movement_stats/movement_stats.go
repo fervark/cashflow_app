@@ -1,7 +1,7 @@
 package movement_stats
 
 import (
-	"net/http"
+	transactionGetter "cashflow/internal/app/getter/transaction"
 
 	"github.com/labstack/echo/v5"
 )
@@ -9,7 +9,19 @@ import (
 type MovementStats struct {
 }
 
-func GetStatistic(ctx *echo.Context) error {
-	
-	return ctx.JSON(http.StatusOK, map[string]string{"message": "Get cash movement statistic."})
+func GetStatistic(ctx *echo.Context) any {
+	query := transactionGetter.TransactionStatsQuery{
+		UserId:   ctx.FormValue("user_id"),
+		DateFrom: ctx.FormValueOr("date_from", ""),
+		DateTo:   ctx.FormValueOr("date_to", ""),
+	}
+
+	// Validate data
+	if err := ctx.Validate(query); err != nil {
+		return err
+	}
+
+	result := transactionGetter.GetStats(query)
+
+	return result
 }
